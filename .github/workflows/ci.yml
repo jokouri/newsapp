@@ -1,0 +1,34 @@
+name: News App CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  php-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Check PHP syntax
+        run: |
+          php -l index.php
+          php -l add.php
+
+  docker-build:
+    runs-on: ubuntu-latest
+    needs: php-check
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build -t news-app:test .
