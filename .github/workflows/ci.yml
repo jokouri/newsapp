@@ -42,3 +42,25 @@ jobs:
           context: .
           push: true
           tags: jokouri/newsapp:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: docker-build-push
+
+    steps:
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v4
+
+      - name: Set kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBECONFIG_FILE }}" > ~/.kube/config
+          chmod 600 ~/.kube/config
+
+      - name: Update deployment image
+        run: |
+          kubectl set image deployment/newsapp newsapp=jokouri/newsapp:latest -n mysql
+
+      - name: Check rollout
+        run: |
+          kubectl rollout status deployment/newsapp -n mysql
