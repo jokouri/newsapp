@@ -2,7 +2,7 @@ name: News App CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ]
 
 jobs:
   php-check:
